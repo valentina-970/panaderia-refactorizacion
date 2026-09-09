@@ -1,6 +1,5 @@
 package org.project.modelo;
 
-// Code Smell #9: Lista de parámetros larga
 public class Empleado {
 
     private String nombre;
@@ -17,26 +16,22 @@ public class Empleado {
         this.salario = salario;
     }
 
-    // Code Smell #9: Lista de parámetros larga - 7 parámetros
-    public void registrar(String nombre, String cedula, String cargo, String turno,
-                          double salario, String fechaIngreso, String numeroContrato) {
-        this.nombre = nombre;
-        this.cedula = cedula;
-        this.cargo = cargo;
-        this.turno = turno;
-        this.salario = salario;
-        System.out.println("Empleado registrado: " + nombre + " - " + cargo);
+    public void registrar(DatosEmpleado datos) {
+        this.nombre = datos.getNombre();
+        this.cedula = datos.getCedula();
+        this.cargo = datos.getCargo();
+        this.turno = datos.getTurno();
+        this.salario = datos.getSalario();
+        System.out.println("Empleado registrado: " + datos.getNombre() + " - " + datos.getCargo());
     }
 
-    // Code Smell #9: Otro método con muchos parámetros
-    public void actualizar(String nombre, String cedula, String cargo, String turno,
-                           double salario, String direccion, String telefono, String email) {
-        this.nombre = nombre;
-        this.cedula = cedula;
-        this.cargo = cargo;
-        this.turno = turno;
-        this.salario = salario;
-        System.out.println("Empleado actualizado: " + nombre);
+    public void actualizar(DatosEmpleado datos) {
+        this.nombre = datos.getNombre();
+        this.cedula = datos.getCedula();
+        this.cargo = datos.getCargo();
+        this.turno = datos.getTurno();
+        this.salario = datos.getSalario();
+        System.out.println("Empleado actualizado: " + datos.getNombre());
     }
 
     public String getNombre() { return nombre; }

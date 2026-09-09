@@ -178,3 +178,98 @@ public abstract double calcularDescuento();
 ```
 
 **Explicación:** La generalidad especulativa ocurre cuando se agrega código "por si acaso" se necesita en el futuro. Estos campos y métodos nunca fueron usados, lo que aumenta la complejidad de mantenimiento sin aportar valor.
+
+---
+
+## 4. Lista de parámetros larga (#9)
+
+**Técnica:** Introduce Parameter Object (Simplificación de llamadas a métodos)
+
+**Fragmento antes:**
+```java
+// Empleado.java - métodos con 7 y 8 parámetros
+public void registrar(String nombre, String cedula, String cargo, String turno,
+                      double salario, String fechaIngreso, String numeroContrato) {
+    this.nombre = nombre;
+    this.cedula = cedula;
+    this.cargo = cargo;
+    this.turno = turno;
+    this.salario = salario;
+    System.out.println("Empleado registrado: " + nombre + " - " + cargo);
+}
+
+public void actualizar(String nombre, String cedula, String cargo, String turno,
+                       double salario, String direccion, String telefono, String email) {
+    this.nombre = nombre;
+    this.cedula = cedula;
+    this.cargo = cargo;
+    this.turno = turno;
+    this.salario = salario;
+    System.out.println("Empleado actualizado: " + nombre);
+}
+
+// PanaderiaService.java
+public void registrarEmpleado(String nombre, String cedula, String cargo,
+                              String turno, double salario, String fechaIngreso,
+                              String numeroContrato) {
+    Empleado empleado = new Empleado(nombre, cedula, cargo, turno, salario);
+    empleados.add(empleado);
+    System.out.println("Empleado registrado: " + nombre);
+}
+```
+
+**Técnica de refactorización aplicada:** Introduce Parameter Object - Se creó una clase `DatosEmpleado` que agrupa todos los parámetros relacionados.
+
+**Fragmento después:**
+```java
+// Nuevo archivo: modelo/DatosEmpleado.java
+public class DatosEmpleado {
+    private String nombre;
+    private String cedula;
+    private String cargo;
+    private String turno;
+    private double salario;
+    private String fechaIngreso;
+    private String numeroContrato;
+
+    public DatosEmpleado(String nombre, String cedula, String cargo, String turno,
+                         double salario, String fechaIngreso, String numeroContrato) {
+        this.nombre = nombre;
+        this.cedula = cedula;
+        this.cargo = cargo;
+        this.turno = turno;
+        this.salario = salario;
+        this.fechaIngreso = fechaIngreso;
+        this.numeroContrato = numeroContrato;
+    }
+
+    // Getters
+    public String getNombre() { return nombre; }
+    public String getCedula() { return cedula; }
+    public String getCargo() { return cargo; }
+    public String getTurno() { return turno; }
+    public double getSalario() { return salario; }
+    public String getFechaIngreso() { return fechaIngreso; }
+    public String getNumeroContrato() { return numeroContrato; }
+}
+
+// Empleado.java - ahora usa el objeto
+public void registrar(DatosEmpleado datos) {
+    this.nombre = datos.getNombre();
+    this.cedula = datos.getCedula();
+    this.cargo = datos.getCargo();
+    this.turno = datos.getTurno();
+    this.salario = datos.getSalario();
+    System.out.println("Empleado registrado: " + datos.getNombre() + " - " + datos.getCargo());
+}
+
+// PanaderiaService.java
+public void registrarEmpleado(DatosEmpleado datos) {
+    Empleado empleado = new Empleado(datos.getNombre(), datos.getCedula(),
+            datos.getCargo(), datos.getTurno(), datos.getSalario());
+    empleados.add(empleado);
+    System.out.println("Empleado registrado: " + datos.getNombre());
+}
+```
+
+**Explicación:** Listas de parámetros largas son difíciles de recordar, propensas a errores de orden, y dificultan la extensión. Al agrupar en un objeto, se mejora la legibilidad y se facilita agregar nuevos campos sin cambiar todas las firmas de método.

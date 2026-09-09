@@ -137,13 +137,11 @@ public class PanaderiaService {
     }
 
     // ===== RESPONSABILIDAD: Empleados =====
-    // Code Smell #9: Lista de parámetros larga
-    public void registrarEmpleado(String nombre, String cedula, String cargo,
-                                  String turno, double salario, String fechaIngreso,
-                                  String numeroContrato) {
-        Empleado empleado = new Empleado(nombre, cedula, cargo, turno, salario);
+    public void registrarEmpleado(DatosEmpleado datos) {
+        Empleado empleado = new Empleado(datos.getNombre(), datos.getCedula(),
+                datos.getCargo(), datos.getTurno(), datos.getSalario());
         empleados.add(empleado);
-        System.out.println("Empleado registrado: " + nombre);
+        System.out.println("Empleado registrado: " + datos.getNombre());
     }
 
     // ===== RESPONSABILIDAD: Inventario =====

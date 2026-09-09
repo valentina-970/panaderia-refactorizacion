@@ -1,5 +1,6 @@
 package org.project;
 
+import org.project.modelo.DatosEmpleado;
 import org.project.servicio.PanaderiaService;
 
 public class Main {
@@ -17,8 +18,9 @@ public class Main {
         panaderia.registrarCliente("Maria Garcia", "0987654321", "3109876543");
 
         // Registrar empleados
-        panaderia.registrarEmpleado("Carlos Lopez", "1111111111", "panadero",
-                "mañana", 1200000, "2025-01-01", "CTR-001");
+        DatosEmpleado datosEmpleado = new DatosEmpleado("Carlos Lopez", "1111111111",
+                "panadero", "mañana", 1200000, "2025-01-01", "CTR-001");
+        panaderia.registrarEmpleado(datosEmpleado);
 
         // Procesar pedidos
         panaderia.procesarPedido(1, "Juan Perez", "1234567890", "3001234567",
