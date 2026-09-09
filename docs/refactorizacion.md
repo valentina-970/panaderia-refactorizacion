@@ -338,3 +338,83 @@ private boolean tieneDireccionEntrega(String direccion) {
 ```
 
 **Explicación:** Las condiciones anidadas difíciles de leer se descomponen en métodos que explican la intención. Esto mejora la legibilidad y facilita modificar las reglas de validación en el futuro.
+
+---
+
+## 6. Código duplicado (#4)
+
+**Técnica:** Extract Method (Composición de métodos)
+
+**Fragmento antes:**
+```java
+// PanaderiaService.java - en procesarPedido()
+Integer stock = inventario.getStock(nombreProducto);
+if (stock == null) {
+    System.out.println("Error: producto no encontrado en inventario");
+    return;
+}
+if (stock < cantidad) {
+    System.out.println("Stock insuficiente para " + nombreProducto);
+    return;
+}
+
+// InventarioService.java - verificarStock() tiene la misma lógica
+public boolean verificarStock(String nombreProducto, int cantidadRequerida) {
+    if (nombreProducto == null || nombreProducto.isEmpty()) {
+        System.out.println("Error: nombre de producto inválido");
+        return false;
+    }
+    if (cantidadRequerida <= 0) {
+        System.out.println("Error: cantidad inválida");
+        return false;
+    }
+    Integer stock = stockProductos.get(nombreProducto);
+    if (stock == null) {
+        System.out.println("Error: producto no encontrado en inventario");
+        return false;
+    }
+    if (stock < cantidadRequerida) {
+        System.out.println("Stock insuficiente para " + nombreProducto);
+        return false;
+    }
+    return true;
+}
+```
+
+**Técnica de refactorización aplicada:** Extract Method - Se consolidó la lógica de validación duplicada en un solo método reutilizable.
+
+**Fragmento después:**
+```java
+// InventarioService.java - método único de validación
+public boolean esProductoValido(String nombreProducto) {
+    return nombreProducto != null && !nombreProducto.isEmpty();
+}
+
+public boolean validarStock(String nombreProducto, int cantidadRequerida) {
+    if (!esProductoValido(nombreProducto)) {
+        System.out.println("Error: nombre de producto inválido");
+        return false;
+    }
+    if (cantidadRequerida <= 0) {
+        System.out.println("Error: cantidad inválida");
+        return false;
+    }
+    Integer stock = stockProductos.get(nombreProducto);
+    if (stock == null) {
+        System.out.println("Error: producto no encontrado en inventario");
+        return false;
+    }
+    if (stock < cantidadRequerida) {
+        System.out.println("Stock insuficiente para " + nombreProducto);
+        return false;
+    }
+    return true;
+}
+
+// PanaderiaService.java - ahora usa el método consolidado
+if (!inventario.validarStock(nombreProducto, cantidad)) {
+    return;
+}
+```
+
+**Explicación:** La lógica de validación de stock estaba duplicada entre `PanaderiaService` e `InventarioService`. Al consolidarla en un solo método, se elimina la duplicación y se facilita el mantenimiento.

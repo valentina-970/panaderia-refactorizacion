@@ -13,9 +13,12 @@ public class InventarioService {
         preciosProductos = new HashMap<>();
     }
 
-    // Code Smell #4: Código duplicado - misma lógica de validación que en PanaderiaService
-    public boolean verificarStock(String nombreProducto, int cantidadRequerida) {
-        if (nombreProducto == null || nombreProducto.isEmpty()) {
+    public boolean esProductoValido(String nombreProducto) {
+        return nombreProducto != null && !nombreProducto.isEmpty();
+    }
+
+    public boolean validarStock(String nombreProducto, int cantidadRequerida) {
+        if (!esProductoValido(nombreProducto)) {
             System.out.println("Error: nombre de producto inválido");
             return false;
         }
@@ -35,9 +38,8 @@ public class InventarioService {
         return true;
     }
 
-    // Code Smell #4: Código duplicado - misma lógica de validación
     public boolean validarProducto(String nombreProducto, double precio, int cantidad) {
-        if (nombreProducto == null || nombreProducto.isEmpty()) {
+        if (!esProductoValido(nombreProducto)) {
             System.out.println("Error: nombre de producto inválido");
             return false;
         }

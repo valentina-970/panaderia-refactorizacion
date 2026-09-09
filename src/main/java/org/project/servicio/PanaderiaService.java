@@ -43,7 +43,7 @@ public class PanaderiaService {
         }
 
         // Validar producto
-        if (nombreProducto == null || nombreProducto.isEmpty()) {
+        if (!inventario.esProductoValido(nombreProducto)) {
             System.out.println("Error: nombre de producto inválido");
             return;
         }
@@ -56,14 +56,7 @@ public class PanaderiaService {
             return;
         }
 
-        // Code Smell #4: Código duplicado - misma validación que en InventarioService
-        Integer stock = inventario.getStock(nombreProducto);
-        if (stock == null) {
-            System.out.println("Error: producto no encontrado en inventario");
-            return;
-        }
-        if (stock < cantidad) {
-            System.out.println("Stock insuficiente para " + nombreProducto);
+        if (!inventario.validarStock(nombreProducto, cantidad)) {
             return;
         }
 
@@ -98,7 +91,8 @@ public class PanaderiaService {
             if (esMetodoPagoValido(metodoPago)) {
                 if (tieneDireccionEntrega(direccionEntrega)) {
                     pedido.setEstado("confirmado");
-                    inventario.actualizarStock(nombreProducto, stock - cantidad);
+                    int stockActual = inventario.getStock(nombreProducto);
+                    inventario.actualizarStock(nombreProducto, stockActual - cantidad);
                     pedidos.add(pedido);
                     System.out.println("Pedido #" + idPedido + " procesado exitosamente");
                     System.out.println("Total: $" + pedido.calcularTotal());
