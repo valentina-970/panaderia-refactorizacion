@@ -12,8 +12,6 @@ public class Pedido {
     private List<Producto> productos;
     private String estado;
     private String fechaPedido;
-
-    // Code Smell #7: Obsesión por primitivos - usando String para todo
     private String metodoPago;
     private String direccionEntrega;
     private String observaciones;
@@ -25,39 +23,37 @@ public class Pedido {
         this.estado = "pendiente";
     }
 
-    // Code Smell #5: Sentencias switch - para calcular precio según tipo
     public double calcularTotal() {
         double total = 0;
         for (Producto producto : productos) {
-            // Code Smell #8: Data Clumps - grupo repetido de parámetros
-            total += calcularPrecioProducto(producto.getNombre(), producto.getPrecio(), producto.getCantidad(), producto.getTipo());
+            total += calcularPrecioProducto(new DatosProducto(
+                producto.getNombre(), producto.getPrecio(),
+                producto.getCantidad(), producto.getTipo()));
         }
         return total;
     }
 
-    // Code Smell #8: Data Clumps - mismo grupo de parámetros que en otros métodos
-    private double calcularPrecioProducto(String nombre, double precio, int cantidad, TipoProducto tipo) {
-        double subtotal = precio * cantidad;
-        // Code Smell #5: Sentencias switch
-        switch (tipo) {
+    private double calcularPrecioProducto(DatosProducto datos) {
+        double subtotal = datos.getSubtotal();
+        switch (datos.getTipo()) {
             case PAN:
-                if (cantidad > 10) {
-                    subtotal = subtotal * 0.85;
+                if (datos.getCantidad() > 10) {
+                    subtotal *= 0.85;
                 }
                 break;
             case PASTEL:
-                if (cantidad > 3) {
-                    subtotal = subtotal * 0.80;
+                if (datos.getCantidad() > 3) {
+                    subtotal *= 0.80;
                 }
                 break;
             case GALLETA:
-                if (cantidad > 20) {
-                    subtotal = subtotal * 0.90;
+                if (datos.getCantidad() > 20) {
+                    subtotal *= 0.90;
                 }
                 break;
             case POSTRE:
-                if (cantidad > 5) {
-                    subtotal = subtotal * 0.88;
+                if (datos.getCantidad() > 5) {
+                    subtotal *= 0.88;
                 }
                 break;
             default:
@@ -66,10 +62,8 @@ public class Pedido {
         return subtotal;
     }
 
-    // Code Smell #3: Feature Envy - accede mucho a PanaderiaService
     public boolean verificarDisponibilidad(PanaderiaService service) {
         for (Producto producto : productos) {
-            // Envia a acceder a datos de PanaderiaService
             int stock = service.obtenerStock(producto.getNombre());
             if (stock < producto.getCantidad()) {
                 return false;
@@ -78,8 +72,6 @@ public class Pedido {
         return true;
     }
 
-    // Code Smell #15: Cirugía de escopeta - si se agrega un tipo de producto,
-    // hay que cambiar este método y otros lugares
     public void aplicarDescuentos() {
         for (Producto producto : productos) {
             if (producto.getTipo() == TipoProducto.PAN) {

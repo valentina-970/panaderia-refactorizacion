@@ -418,3 +418,80 @@ if (!inventario.validarStock(nombreProducto, cantidad)) {
 ```
 
 **Explicación:** La lógica de validación de stock estaba duplicada entre `PanaderiaService` e `InventarioService`. Al consolidarla en un solo método, se elimina la duplicación y se facilita el mantenimiento.
+
+---
+
+## 7. Data Clumps (#8)
+
+**Técnica:** Introduce Parameter Object (Organización de datos)
+
+**Fragmento antes:**
+```java
+// Pedido.java - grupo repetido de parámetros
+public double calcularTotal() {
+    double total = 0;
+    for (Producto producto : productos) {
+        total += calcularPrecioProducto(producto.getNombre(), producto.getPrecio(),
+                                        producto.getCantidad(), producto.getTipo());
+    }
+    return total;
+}
+
+private double calcularPrecioProducto(String nombre, double precio, int cantidad, TipoProducto tipo) {
+    double subtotal = precio * cantidad;
+    switch (tipo) {
+        case PAN:
+            if (cantidad > 10) { subtotal *= 0.85; }
+            break;
+        case PASTEL:
+            if (cantidad > 3) { subtotal *= 0.80; }
+            break;
+        ...
+    }
+    return subtotal;
+}
+```
+
+**Técnica de refactorización aplicada:** Introduce Parameter Object - Se creó una clase `DatosProducto` para el grupo de parámetros que siempre viaja junto.
+
+**Fragmento después:**
+```java
+// Nuevo archivo: modelo/DatosProducto.java
+public class DatosProducto {
+    private String nombre;
+    private double precio;
+    private int cantidad;
+    private TipoProducto tipo;
+
+    public DatosProducto(String nombre, double precio, int cantidad, TipoProducto tipo) {
+        this.nombre = nombre;
+        this.precio = precio;
+        this.cantidad = cantidad;
+        this.tipo = tipo;
+    }
+
+    public double getSubtotal() {
+        return precio * cantidad;
+    }
+
+    // Getters
+    public String getNombre() { return nombre; }
+    public double getPrecio() { return precio; }
+    public int getCantidad() { return cantidad; }
+    public TipoProducto getTipo() { return tipo; }
+}
+
+// Pedido.java - ahora usa el objeto
+private double calcularPrecioProducto(DatosProducto datos) {
+    double subtotal = datos.getSubtotal();
+    switch (datos.getTipo()) {
+        case PAN:
+            if (datos.getCantidad() > 10) { subtotal *= 0.85; }
+            break;
+        ...
+    }
+    return subtotal;
+}
+```
+
+**Explicación:** Un "Data Clump" es un grupo de parámetros que aparece repetidamente juntos. Al encapsularlos en un objeto, se elimina la repetición y se crea una abstracción significativa.
