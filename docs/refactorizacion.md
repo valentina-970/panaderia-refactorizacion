@@ -126,3 +126,55 @@ switch (tipo) {
 ```
 
 **Explicación:** Usar strings como tipo de código es propenso a errores (un typo silencioso compila igual). Al usar una enumeración, se obtiene type-safety, autocompletado del IDE, y se elimina la posibilidad de valores inválidos.
+
+---
+
+## 3. Generalidad especulativa (#12)
+
+**Técnica:** Hide Field + Hide Method (Organización de datos / Simplificación de llamadas)
+
+**Fragmento antes:**
+```java
+// Producto.java - campos que nunca se usaban
+protected String sabor;
+protected String tamano;
+protected boolean esPremium;
+protected String codigoBarras;
+protected String fechaProduccion;
+protected String fechaVencimiento;
+protected int calorias;
+
+// Métodos que nunca se invocaban
+public void verificarCalidad() {
+    System.out.println("Verificando calidad de " + nombre);
+}
+
+public void generarEtiqueta() {
+    System.out.println("Etiqueta: " + nombre + " - $" + precio);
+}
+
+// Getters/Setters que nunca se usaban
+public String getSabor() { return sabor; }
+public void setSabor(String sabor) { this.sabor = sabor; }
+public String getTamano() { return tamano; }
+public void setTamano(String tamano) { this.tamano = tamano; }
+public boolean isEsPremium() { return esPremium; }
+public void setEsPremium(boolean esPremium) { this.esPremium = esPremium; }
+```
+
+**Técnica de refactorización aplicada:** Hide Field + Hide Method - Se eliminaron los campos, métodos y getters/setters que nunca eran utilizados.
+
+**Fragmento después:**
+```java
+// Producto.java - solo se mantienen los campos realmente usados
+protected String nombre;
+protected double precio;
+protected int cantidad;
+protected TipoProducto tipo;
+
+// Solo quedan los métodos abstractos y getters/setters necesarios
+public abstract String getCategoria();
+public abstract double calcularDescuento();
+```
+
+**Explicación:** La generalidad especulativa ocurre cuando se agrega código "por si acaso" se necesita en el futuro. Estos campos y métodos nunca fueron usados, lo que aumenta la complejidad de mantenimiento sin aportar valor.
