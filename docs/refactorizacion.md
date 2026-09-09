@@ -52,3 +52,77 @@ public void enviarNotificacion(String mensaje, String destino) {
 ```
 
 **Explicación:** El código muerto增加了 la complejidad innecesaria del sistema. Estos tres métodos estaban definidos en `PanaderiaService` pero nunca eran llamados desde `Main.java` ni desde ninguna otra clase. Eliminarlos reduce el tamaño de la clase y elimina confusión sobre qué métodos son realmente usados.
+
+---
+
+## 2. Obsesión por primitivos (#7)
+
+**Técnica:** Replace Type Code with Class (Organización de datos)
+
+**Fragmento antes:**
+```java
+// Producto.java - el campo tipo era un String
+protected String tipo;
+
+// Pedido.java - switch con strings
+switch (tipo) {
+    case "pan": ...
+    case "pastel": ...
+    case "galleta": ...
+    case "postre": ...
+}
+
+// PanaderiaService.java - se comparaba con strings mágicos
+if (tipo.equals("pan")) {
+    Pan pan = new Pan(nombreProducto, precio, cantidad);
+    ...
+} else if (tipo.equals("pastel")) {
+    Pastel pastel = new Pastel(nombreProducto, precio, cantidad);
+    ...
+}
+```
+
+**Técnica de refactorización aplicada:** Replace Type Code with Class - Se creó una enumeración `TipoProducto` para reemplazar los strings usados como tipo.
+
+**Fragmento después:**
+```java
+// Nuevo archivo: modelo/TipoProducto.java
+public enum TipoProducto {
+    PAN("pan"),
+    PASTEL("pastel"),
+    GALLETA("galleta"),
+    POSTRE("postre");
+
+    private final String codigo;
+
+    TipoProducto(String codigo) {
+        this.codigo = codigo;
+    }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public static TipoProducto fromCodigo(String codigo) {
+        for (TipoProducto tipo : values()) {
+            if (tipo.codigo.equals(codigo)) {
+                return tipo;
+            }
+        }
+        throw new IllegalArgumentException("Tipo no válido: " + codigo);
+    }
+}
+
+// Producto.java - campo tipo ahora es de tipo TipoProducto
+protected TipoProducto tipo;
+
+// Pedido.java - switch ahora usa enum
+switch (tipo) {
+    case PAN: ...
+    case PASTEL: ...
+    case GALLETA: ...
+    case POSTRE: ...
+}
+```
+
+**Explicación:** Usar strings como tipo de código es propenso a errores (un typo silencioso compila igual). Al usar una enumeración, se obtiene type-safety, autocompletado del IDE, y se elimina la posibilidad de valores inválidos.

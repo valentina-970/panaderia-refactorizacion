@@ -2,12 +2,11 @@ package org.project.modelo;
 
 public abstract class Producto {
 
-    // Code Smell #7: Obsesión por primitivos - todo son primitivos
     // Code Smell #12: Generalidad especulativa - campos que nunca se usan
     protected String nombre;
     protected double precio;
     protected int cantidad;
-    protected String tipo;
+    protected TipoProducto tipo;
     protected String sabor;
     protected String tamano;
     protected boolean esPremium;
@@ -42,8 +41,8 @@ public abstract class Producto {
     public void setPrecio(double precio) { this.precio = precio; }
     public int getCantidad() { return cantidad; }
     public void setCantidad(int cantidad) { this.cantidad = cantidad; }
-    public String getTipo() { return tipo; }
-    public void setTipo(String tipo) { this.tipo = tipo; }
+    public TipoProducto getTipo() { return tipo; }
+    public void setTipo(TipoProducto tipo) { this.tipo = tipo; }
     public String getSabor() { return sabor; }
     public void setSabor(String sabor) { this.sabor = sabor; }
     public String getTamano() { return tamano; }

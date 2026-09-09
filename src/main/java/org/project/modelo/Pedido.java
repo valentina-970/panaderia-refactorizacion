@@ -36,26 +36,26 @@ public class Pedido {
     }
 
     // Code Smell #8: Data Clumps - mismo grupo de parámetros que en otros métodos
-    private double calcularPrecioProducto(String nombre, double precio, int cantidad, String tipo) {
+    private double calcularPrecioProducto(String nombre, double precio, int cantidad, TipoProducto tipo) {
         double subtotal = precio * cantidad;
         // Code Smell #5: Sentencias switch
         switch (tipo) {
-            case "pan":
+            case PAN:
                 if (cantidad > 10) {
                     subtotal = subtotal * 0.85;
                 }
                 break;
-            case "pastel":
+            case PASTEL:
                 if (cantidad > 3) {
                     subtotal = subtotal * 0.80;
                 }
                 break;
-            case "galleta":
+            case GALLETA:
                 if (cantidad > 20) {
                     subtotal = subtotal * 0.90;
                 }
                 break;
-            case "postre":
+            case POSTRE:
                 if (cantidad > 5) {
                     subtotal = subtotal * 0.88;
                 }
@@ -82,15 +82,15 @@ public class Pedido {
     // hay que cambiar este método y otros lugares
     public void aplicarDescuentos() {
         for (Producto producto : productos) {
-            if (producto.getTipo().equals("pan")) {
+            if (producto.getTipo() == TipoProducto.PAN) {
                 if (producto.getCantidad() > 10) {
                     producto.setPrecio(producto.getPrecio() * 0.85);
                 }
-            } else if (producto.getTipo().equals("pastel")) {
+            } else if (producto.getTipo() == TipoProducto.PASTEL) {
                 if (producto.getCantidad() > 3) {
                     producto.setPrecio(producto.getPrecio() * 0.80);
                 }
-            } else if (producto.getTipo().equals("galleta")) {
+            } else if (producto.getTipo() == TipoProducto.GALLETA) {
                 if (producto.getCantidad() > 20) {
                     producto.setPrecio(producto.getPrecio() * 0.90);
                 }

@@ -74,11 +74,12 @@ public class PanaderiaService {
 
         // Crear producto
         Producto producto = null;
-        if (tipo.equals("pan")) {
+        TipoProducto tipoProducto = TipoProducto.fromCodigo(tipo);
+        if (tipoProducto == TipoProducto.PAN) {
             Pan pan = new Pan(nombreProducto, precio, cantidad);
             pan.horneado();
             producto = pan;
-        } else if (tipo.equals("pastel")) {
+        } else if (tipoProducto == TipoProducto.PASTEL) {
             Pastel pastel = new Pastel(nombreProducto, precio, cantidad);
             pastel.decorar();
             producto = pastel;
