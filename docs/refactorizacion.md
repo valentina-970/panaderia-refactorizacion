@@ -273,3 +273,68 @@ public void registrarEmpleado(DatosEmpleado datos) {
 ```
 
 **Explicación:** Listas de parámetros largas son difíciles de recordar, propensas a errores de orden, y dificultan la extensión. Al agrupar en un objeto, se mejora la legibilidad y se facilita agregar nuevos campos sin cambiar todas las firmas de método.
+
+---
+
+## 5. Condicionales complejos (#6)
+
+**Técnica:** Decompose Conditional (Simplificación de condicionales)
+
+**Fragmento antes:**
+```java
+// PanaderiaService.java - en procesarPedido(), condicionales anidados
+if (pedido.verificarDisponibilidad(this)) {
+    if (metodoPago.equals("efectivo") || metodoPago.equals("tarjeta") ||
+        metodoPago.equals("nequi") || metodoPago.equals("daviplata")) {
+        if (direccionEntrega != null && !direccionEntrega.isEmpty()) {
+            pedido.setEstado("confirmado");
+            inventario.actualizarStock(nombreProducto, stock - cantidad);
+            pedidos.add(pedido);
+            System.out.println("Pedido #" + idPedido + " procesado exitosamente");
+            System.out.println("Total: $" + pedido.calcularTotal());
+        } else {
+            System.out.println("Error: dirección de entrega requerida");
+        }
+    } else {
+        System.out.println("Error: método de pago no válido");
+    }
+} else {
+    System.out.println("Error: stock insuficiente");
+}
+```
+
+**Técnica de refactorización aplicada:** Decompose Conditional - Se extrajeron las condiciones a métodos con nombres descriptivos.
+
+**Fragmento después:**
+```java
+// PanaderiaService.java - condiciones extraídas a métodos
+if (pedido.verificarDisponibilidad(this)) {
+    if (esMetodoPagoValido(metodoPago)) {
+        if (tieneDireccionEntrega(direccionEntrega)) {
+            pedido.setEstado("confirmado");
+            inventario.actualizarStock(nombreProducto, stock - cantidad);
+            pedidos.add(pedido);
+            System.out.println("Pedido #" + idPedido + " procesado exitosamente");
+            System.out.println("Total: $" + pedido.calcularTotal());
+        } else {
+            System.out.println("Error: dirección de entrega requerida");
+        }
+    } else {
+        System.out.println("Error: método de pago no válido");
+    }
+} else {
+    System.out.println("Error: stock insuficiente");
+}
+
+// Métodos extraídos
+private boolean esMetodoPagoValido(String metodoPago) {
+    return metodoPago.equals("efectivo") || metodoPago.equals("tarjeta") ||
+           metodoPago.equals("nequi") || metodoPago.equals("daviplata");
+}
+
+private boolean tieneDireccionEntrega(String direccion) {
+    return direccion != null && !direccion.isEmpty();
+}
+```
+
+**Explicación:** Las condiciones anidadas difíciles de leer se descomponen en métodos que explican la intención. Esto mejora la legibilidad y facilita modificar las reglas de validación en el futuro.

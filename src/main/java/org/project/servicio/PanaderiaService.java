@@ -93,10 +93,10 @@ public class PanaderiaService {
         pedido.setObservaciones(observaciones);
         pedido.agregarProducto(producto);
 
-        // Code Smell #6: Condicionales complejos
+        // Confirmar pedido
         if (pedido.verificarDisponibilidad(this)) {
-            if (metodoPago.equals("efectivo") || metodoPago.equals("tarjeta") || metodoPago.equals("nequi") || metodoPago.equals("daviplata")) {
-                if (direccionEntrega != null && !direccionEntrega.isEmpty()) {
+            if (esMetodoPagoValido(metodoPago)) {
+                if (tieneDireccionEntrega(direccionEntrega)) {
                     pedido.setEstado("confirmado");
                     inventario.actualizarStock(nombreProducto, stock - cantidad);
                     pedidos.add(pedido);
@@ -117,6 +117,15 @@ public class PanaderiaService {
 
     public int obtenerStock(String nombreProducto) {
         return inventario.getStock(nombreProducto);
+    }
+
+    private boolean esMetodoPagoValido(String metodoPago) {
+        return metodoPago.equals("efectivo") || metodoPago.equals("tarjeta") ||
+               metodoPago.equals("nequi") || metodoPago.equals("daviplata");
+    }
+
+    private boolean tieneDireccionEntrega(String direccion) {
+        return direccion != null && !direccion.isEmpty();
     }
 
     // Code Smell #14: Cambio divergente - métodos para diferentes responsabilidades
