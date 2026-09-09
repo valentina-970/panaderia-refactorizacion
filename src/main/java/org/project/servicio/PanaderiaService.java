@@ -114,31 +114,6 @@ public class PanaderiaService {
         System.out.println("=== FIN PROCESAMIENTO ===");
     }
 
-    // Code Smell #13: Código muerto - método que nunca se invoca
-    public void generarReporteDiario() {
-        System.out.println("=== REPORTE DIARIO ===");
-        System.out.println("Total de pedidos: " + pedidos.size());
-        System.out.println("Total de clientes: " + clientes.size());
-        double totalVentas = 0;
-        for (Pedido pedido : pedidos) {
-            totalVentas += pedido.calcularTotal();
-        }
-        System.out.println("Total ventas: $" + totalVentas);
-    }
-
-    // Code Smell #13: Código muerto - otro método no invocado
-    public void calcularImpuestos(double monto) {
-        double iva = monto * 0.19;
-        double retencion = monto * 0.025;
-        System.out.println("IVA: $" + iva);
-        System.out.println("Retención: $" + retencion);
-    }
-
-    // Code Smell #13: Código muerto - método sin uso
-    public void enviarNotificacion(String mensaje, String destino) {
-        System.out.println("Enviando notificación a " + destino + ": " + mensaje);
-    }
-
     public int obtenerStock(String nombreProducto) {
         return inventario.getStock(nombreProducto);
     }
